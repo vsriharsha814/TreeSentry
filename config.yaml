@@ -11,8 +11,8 @@ data:
 preprocessing:
   tile_size: 256                     # Size of tiles to create (pixels)
   overlap: 32                        # Overlap between adjacent tiles (pixels)
-  # years: [2018, 2019, 2020, 2021]    # Years to process
-  years: [2020, 2021]    # Years to process
+  years: [2018, 2019, 2020, 2021]    # Years to process
+  # years: [2020, 2021]    # Years to process
   satellite: "sentinel2"             # One of: sentinel2, landsat8, landsat9
   indices: ["NDVI", "EVI", "NDWI"]   # Indices to calculate
   use_static_layers: true            # Whether to use static layers
@@ -25,8 +25,8 @@ preprocessing:
 training:
   model_type: "unet"                 # One of: simple2dcnn, simple3dcnn, convlstm, unet
   batch_size: 16
-  # epochs: 50
-  epochs: 5
+  epochs: 50
+  # epochs: 5
   lr: 0.001
   weight_decay: 0.0001
   in_channels: 12                    # Number of input channels (bands)
