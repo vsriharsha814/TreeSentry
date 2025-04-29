@@ -2,12 +2,6 @@
 
 This project implements a comprehensive pipeline for detecting and monitoring deforestation using satellite imagery and deep learning. The system processes temporal satellite data from sources like Sentinel-2 and Landsat, and trains various neural network architectures to identify areas where deforestation has occurred.
 
-<p align="center">
-  <img src="results/visualizations/deforestation_prediction_example.png" alt="Deforestation Prediction Example" width="600"/>
-  <br>
-  <em>Example of deforestation detection visualization (will be generated when you run the project)</em>
-</p>
-
 ## Features
 
 - **Data acquisition** from Google Earth Engine
