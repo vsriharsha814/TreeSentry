@@ -1,7 +1,5 @@
 # Deforestation Detection Project Completion Guide
 
-Congratulations! You now have a complete deforestation detection project using deep learning and satellite imagery. This guide walks you through what has been added and how to use the enhanced project with detailed instructions for each component.
-
 ## Overview
 
 This project implements a full machine learning pipeline for detecting and monitoring deforestation using satellite imagery. It processes temporal satellite data from sources like Sentinel-2 and Landsat, and trains various neural network architectures to identify areas where deforestation has occurred.
