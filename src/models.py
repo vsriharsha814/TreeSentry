@@ -2,6 +2,74 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+class Simple2DCNN(nn.Module):
+    """
+    Simple 2D CNN for deforestation detection.
+    Takes a single satellite image as input.
+    """
+    def __init__(self, in_channels=6, out_channels=1):
+        super(Simple2DCNN, self).__init__()
+        
+        # Encoder
+        self.encoder = nn.Sequential(
+            # First conv block
+            nn.Conv2d(in_channels, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            
+            # Second conv block
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            
+            # Third conv block
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+        
+        # Decoder
+        self.decoder = nn.Sequential(
+            # First upsampling block
+            nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            
+            # Second upsampling block
+            nn.ConvTranspose2d(64, 32, kernel_size=2, stride=2),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
+            
+            # Third upsampling block
+            nn.ConvTranspose2d(32, 16, kernel_size=2, stride=2),
+            nn.Conv2d(16, 16, kernel_size=3, padding=1),
+            nn.BatchNorm2d(16),
+            nn.ReLU(inplace=True),
+            
+            # Final convolution to get output
+            nn.Conv2d(16, out_channels, kernel_size=1),
+            nn.Sigmoid()
+        )
+        
+    def forward(self, x):
+        """
+        Forward pass
+        
+        Args:
+            x: Input tensor of shape [batch_size, channels, height, width]
+            
+        Returns:
+            Output tensor of shape [batch_size, out_channels, height, width]
+        """
+        x = self.encoder(x)
+        x = self.decoder(x)
+        return x
+
 class Simple3DCNN(nn.Module):
     """
     3D CNN for spatio-temporal deforestation detection.
