@@ -201,7 +201,10 @@ def create_change_visualizations(prediction_maps, change_maps, statistics, outpu
             axes[i].axis('off')
         
         plt.tight_layout()
-        plt.savefig(os.path.join(output_dir, "multi_year_progression.png"), dpi=300, bbox_inches='tight')
+        
+        # Create descriptive filename with year range
+        year_range = f"{min(years)}_to_{max(years)}"
+        plt.savefig(os.path.join(output_dir, f"multi_year_progression_{year_range}.png"), dpi=300, bbox_inches='tight')
         plt.close()
     
     # Generate a deforestation timeline plot
@@ -220,12 +223,13 @@ def create_change_visualizations(prediction_maps, change_maps, statistics, outpu
     plt.grid(True)
     plt.xticks(list(deforestation_by_year.keys()))
     
-    # Save the figure
-    plt.savefig(os.path.join(output_dir, "deforestation_timeline.png"), dpi=300, bbox_inches='tight')
+    # Save the figure with year range in filename
+    year_range = f"{min(years)}_to_{max(years)}"
+    plt.savefig(os.path.join(output_dir, f"deforestation_timeline_{year_range}.png"), dpi=300, bbox_inches='tight')
     plt.close()
     
-    # Save statistics to a text file
-    stats_path = os.path.join(output_dir, "change_statistics.txt")
+    # Save statistics to a text file with year range
+    stats_path = os.path.join(output_dir, f"change_statistics_{year_range}.txt")
     with open(stats_path, 'w') as f:
         f.write("Deforestation Change Statistics\n")
         f.write("==============================\n\n")

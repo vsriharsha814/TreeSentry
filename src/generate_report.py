@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 import rasterio
-from src.utils import get_logger
+from utils import get_logger
 
 logger = get_logger("ReportGenerator")
 

@@ -128,6 +128,8 @@ def predict_tiles(model, stacked_data, tile_size, overlap, threshold, device, mo
         years_to_use = years[-time_steps:]
         prediction_year = years[-1]  # Use the latest year for output
         
+        logger.info(f"Using years {years_to_use} for temporal prediction with target year {prediction_year}")
+        
         # Get reference data from the latest year
         reference_data = stacked_data[prediction_year]
         data_shape = reference_data['data'].shape
@@ -182,6 +184,8 @@ def predict_tiles(model, stacked_data, tile_size, overlap, threshold, device, mo
         # For non-temporal models, just use the most recent year
         years = sorted(stacked_data.keys())
         prediction_year = years[-1]
+        
+        logger.info(f"Using year {prediction_year} for non-temporal prediction")
         
         # Get data for this year
         data = stacked_data[prediction_year]['data']
@@ -273,7 +277,7 @@ def create_visualization(input_data, prediction_map, binary_map, output_dir, yea
     viz_dir = os.path.join(output_dir, 'visualizations')
     os.makedirs(viz_dir, exist_ok=True)
     
-    # Add year to filename if provided
+    # Add year to filename if provided - ensure year is part of the filename
     year_str = f"_{year}" if year else ""
     
     # Extract RGB bands from input data (assuming first 3 channels are RGB)
@@ -311,7 +315,7 @@ def create_visualization(input_data, prediction_map, binary_map, output_dir, yea
     plt.title(f"Deforestation Prediction{' for ' + str(year) if year else ''}")
     plt.axis('off')
     
-    # Save the visualization
+    # Save the visualization - ensure unique filename with year
     viz_path = os.path.join(viz_dir, f"deforestation_visualization{year_str}.png")
     plt.savefig(viz_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -327,7 +331,7 @@ def create_visualization(input_data, prediction_map, binary_map, output_dir, yea
     plt.title(f"Deforestation Probability{' for ' + str(year) if year else ''}")
     plt.axis('off')
     
-    # Save the visualization
+    # Save the visualization - ensure unique filename with year
     prob_viz_path = os.path.join(viz_dir, f"deforestation_probability{year_str}.png")
     plt.savefig(prob_viz_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -370,44 +374,71 @@ def main():
         logger.error("No valid data found. Exiting.")
         return
     
-    # Generate predictions
-    logger.info(f"Generating predictions using {model_type} model")
-    prediction_map, binary_map, transform, crs = predict_tiles(
-        model=model,
-        stacked_data=stacked_data,
-        tile_size=args.tile_size,
-        overlap=args.overlap,
-        threshold=args.threshold,
-        device=device,
-        model_type=model_type,
-        time_steps=time_steps
-    )
-    
-    if prediction_map is None:
-        logger.error("Failed to generate predictions. Exiting.")
-        return
-    
-    # Save prediction maps
-    logger.info("Saving prediction maps")
-    latest_year = sorted(stacked_data.keys())[-1]
-    prob_path, binary_path = save_prediction_maps(
-        prediction_map=prediction_map,
-        binary_map=binary_map,
-        transform=transform,
-        crs=crs,
-        output_dir=args.output_dir,
-        year=latest_year
-    )
-    
-    # Create visualizations
-    logger.info("Creating visualizations")
-    create_visualization(
-        input_data=stacked_data[latest_year]['data'],
-        prediction_map=prediction_map,
-        binary_map=binary_map,
-        output_dir=args.output_dir,
-        year=latest_year
-    )
+    # Process each year separately
+    for year, data in stacked_data.items():
+        logger.info(f"Processing year {year}")
+        
+        # For temporal models, we need to ensure we have enough prior years
+        if model_type in ['simple3dcnn', 'convlstm']:
+            years = sorted(stacked_data.keys())
+            current_year_idx = years.index(year)
+            
+            # Skip if we don't have enough prior years for temporal analysis
+            if current_year_idx < time_steps - 1:
+                logger.info(f"Skipping year {year} - not enough prior years for temporal analysis")
+                continue
+            
+            # Create a temporal subset with current year and required prior years
+            temporal_subset = {y: stacked_data[y] for y in years[current_year_idx-(time_steps-1):current_year_idx+1]}
+            
+            # Generate predictions for this temporal window
+            prediction_map, binary_map, transform, crs = predict_tiles(
+                model=model,
+                stacked_data=temporal_subset,
+                tile_size=args.tile_size,
+                overlap=args.overlap,
+                threshold=args.threshold,
+                device=device,
+                model_type=model_type,
+                time_steps=time_steps
+            )
+        else:
+            # For non-temporal models, just process the current year
+            single_year_data = {year: data}
+            prediction_map, binary_map, transform, crs = predict_tiles(
+                model=model,
+                stacked_data=single_year_data,
+                tile_size=args.tile_size,
+                overlap=args.overlap,
+                threshold=args.threshold,
+                device=device,
+                model_type=model_type
+            )
+        
+        if prediction_map is None:
+            logger.error(f"Failed to generate predictions for year {year}. Skipping.")
+            continue
+        
+        # Save prediction maps with proper year
+        logger.info(f"Saving prediction maps for year {year}")
+        prob_path, binary_path = save_prediction_maps(
+            prediction_map=prediction_map,
+            binary_map=binary_map,
+            transform=transform,
+            crs=crs,
+            output_dir=args.output_dir,
+            year=year
+        )
+        
+        # Create visualizations with proper year
+        logger.info(f"Creating visualizations for year {year}")
+        create_visualization(
+            input_data=data['data'],
+            prediction_map=prediction_map,
+            binary_map=binary_map,
+            output_dir=args.output_dir,
+            year=year
+        )
     
     logger.info(f"Prediction complete! Results saved to {args.output_dir}")
 
