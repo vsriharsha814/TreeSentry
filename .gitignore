@@ -2,3 +2,7 @@ venv
 kaggle.json
 planet-understanding-the-amazon-from-space
 raw
+processed
+models
+results
+*.pyc

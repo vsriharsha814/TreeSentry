@@ -61,10 +61,20 @@ class DeforestDataset(Dataset):
         # Convert to PyTorch tensors
         input_tensor = torch.from_numpy(input_array).float()
         label_tensor = torch.from_numpy(label_array).float()
+
+        # Add debug print
+        # print(f"Original input tensor shape: {input_tensor.shape}")
         
-        # Make sure input is in correct format [C, H, W]
-        if input_tensor.ndim == 3 and input_tensor.shape[0] < input_tensor.shape[1]:
-            input_tensor = input_tensor.permute(2, 0, 1)
+        # # Make sure input is in correct format [C, H, W]
+        # if input_tensor.ndim == 3 and input_tensor.shape[0] < input_tensor.shape[1]:
+        #     input_tensor = input_tensor.permute(2, 0, 1)
+
+        if label_tensor.max() > 1.0 or label_tensor.min() < 0.0:
+            # Either clip values
+            label_tensor = torch.clamp(label_tensor, 0.0, 1.0)
+            # Or normalize to 0-1 range if appropriate
+            # label_tensor = (label_tensor - label_tensor.min()) / (label_tensor.max() - label_tensor.min() + 1e-8)
+ 
         
         # Make sure label has channel dimension [1, H, W]
         if label_tensor.ndim == 2:

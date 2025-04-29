@@ -111,6 +111,11 @@ def preprocess_stage(config):
 def train_stage(config):
     """Run the model training stage"""
     logger.info("Starting model training stage")
+
+    args = parse_args()
+
+    # Print input channels for debugging
+    logger.info(f"Model configured for {config['training']['in_channels']} input channels")
     
     # Create and run trainer
     trainer = Trainer(config_path=args.config)

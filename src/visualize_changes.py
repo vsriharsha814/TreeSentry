@@ -11,7 +11,7 @@ import rasterio
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import matplotlib.patches as mpatches
-from src.utils import get_logger
+from utils import get_logger
 
 logger = get_logger("ChangeVisualization")
 

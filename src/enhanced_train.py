@@ -144,6 +144,8 @@ class Trainer:
         pbar = tqdm(self.train_loader, desc=f"Epoch {epoch+1}/{self.config['training']['epochs']}")
         
         for batch_idx, (inputs, targets) in enumerate(pbar):
+            print(f"Targets min: {targets.min().item()}, max: {targets.max().item()}")
+
             # Move data to device
             inputs = inputs.to(self.device)
             targets = targets.to(self.device)
@@ -212,14 +214,22 @@ class Trainer:
         
         # Binary predictions (threshold at 0.5)
         preds_binary = (outputs_flat > 0.5).astype(float)
+        targets_binary = (targets_flat > 0.5).astype(float)
         
         metrics = {
-            'accuracy': accuracy_score(targets_flat, preds_binary),
-            'precision': precision_score(targets_flat, preds_binary, zero_division=0),
-            'recall': recall_score(targets_flat, preds_binary, zero_division=0),
-            'f1': f1_score(targets_flat, preds_binary, zero_division=0),
-            'auc': roc_auc_score(targets_flat, outputs_flat)
+        'accuracy': accuracy_score(targets_binary, preds_binary),
+        'precision': precision_score(targets_binary, preds_binary, zero_division=0),
+        'recall': recall_score(targets_binary, preds_binary, zero_division=0),
+        'f1': f1_score(targets_binary, preds_binary, zero_division=0),
         }
+
+        # Only calculate AUC if both classes are present
+        unique_classes = np.unique(targets_binary)
+        if len(unique_classes) > 1:
+            metrics['auc'] = roc_auc_score(targets_binary, outputs_flat)
+        else:
+            metrics['auc'] = 0.5  # Default AUC for single-class data
+
         
         return metrics
     
