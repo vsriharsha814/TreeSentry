@@ -59,9 +59,10 @@ class DataLoader:
         end_date = f'{year}-12-31'
         
         if satellite.lower() == 'sentinel2':
-            collection = (ee.ImageCollection('COPERNICUS/S2_SR')
+            collection = (ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
                          .filterDate(start_date, end_date)
-                         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20)))
+                         .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+                         .select(['B2', 'B3', 'B4', 'B8', 'B11', 'B12']))
         elif satellite.lower() == 'landsat8':
             collection = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
                          .filterDate(start_date, end_date)
