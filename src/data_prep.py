@@ -3,6 +3,7 @@ import os
 import rasterio
 from rasterio.windows import Window
 import glob
+# from src.utils import get_logger # use for running config file
 from utils import get_logger
 
 class DataPrep:
