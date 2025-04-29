@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 import glob
-from utils import get_logger
+from src.utils import get_logger
 
 class DeforestDataset(Dataset):
     def __init__(self, processed_dir, transform=None):

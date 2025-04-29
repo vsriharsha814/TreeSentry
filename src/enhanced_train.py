@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # Import our modules
-from models import Simple2DCNN, Simple3DCNN, ConvLSTM, UNet
-from dataset import DeforestDataset
-from utils import get_logger
+from src.models import Simple2DCNN, Simple3DCNN, ConvLSTM, UNet
+from src.dataset import DeforestDataset
+from src.utils import get_logger
 
 class Trainer:
     def __init__(self, config_path):

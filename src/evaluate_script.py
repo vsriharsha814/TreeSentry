@@ -17,9 +17,9 @@ from sklearn.metrics import (
 )
 
 # Import local modules
-from models import Simple2DCNN, Simple3DCNN, ConvLSTM, UNet
-from dataset import DeforestDataset, TemporalDeforestDataset
-from utils import get_logger
+from src.models import Simple2DCNN, Simple3DCNN, ConvLSTM, UNet
+from src.dataset import DeforestDataset, TemporalDeforestDataset
+from src.utils import get_logger
 
 logger = get_logger("Evaluation")
 

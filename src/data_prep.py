@@ -3,7 +3,7 @@ import os
 import rasterio
 from rasterio.windows import Window
 import glob
-from utils import get_logger
+from src.utils import get_logger
 
 class DataPrep:
     def __init__(self, download_dir, tile_size, output_dir):

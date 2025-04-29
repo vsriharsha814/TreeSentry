@@ -3,7 +3,7 @@ import os
 import rasterio
 import geopandas as gpd
 import time
-from utils import get_logger
+from src.utils import get_logger
 
 class DataLoader:
     def __init__(self, boundary_shp, tiles_shp=None, download_dir=None):

@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 import rasterio
-from utils import get_logger
+from src.utils import get_logger
 
 class DeforestDataset(Dataset):
     def __init__(self, tiles_dir, transform=None):
