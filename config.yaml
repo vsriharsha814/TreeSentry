@@ -1,6 +1,49 @@
-# config.yaml (example)
-tiles_dir: "tiles/"
-in_channels: 4
-batch_size: 8
-lr: 1e-3
-epochs: 20
+# Deforestation Detection Project Configuration
+
+# Data paths
+data:
+  boundary_shp: "data/boundary.shp"  # Path to shapefile defining study area
+  tiles_shp: "data/tiles.shp"        # Path to optional shapefile defining processing tiles
+  download_dir: "data/raw"           # Where to save raw satellite data
+  processed_dir: "data/processed"    # Where to save processed tiles
+  
+# Preprocessing parameters
+preprocessing:
+  tile_size: 256                     # Size of tiles to create (pixels)
+  overlap: 32                        # Overlap between adjacent tiles (pixels)
+  years: [2018, 2019, 2020, 2021]    # Years to process
+  satellite: "sentinel2"             # One of: sentinel2, landsat8, landsat9
+  indices: ["NDVI", "EVI", "NDWI"]   # Indices to calculate
+  use_static_layers: true            # Whether to use static layers
+  static_layers:                     # Static layers to include (Earth Engine dataset IDs)
+    elevation: "USGS/SRTMGL1_003"    # SRTM elevation
+    slope: "CSP/ERGo/1_0/Global/SRTM_slope" # Slope derived from SRTM
+    population: "CIESIN/GPWv411/GPW_Population_Density" # Population density
+
+# Training parameters
+training:
+  model_type: "unet"                 # One of: simple2dcnn, simple3dcnn, convlstm, unet
+  batch_size: 16
+  epochs: 50
+  lr: 0.001
+  weight_decay: 0.0001
+  in_channels: 6                     # Number of input channels (bands)
+  time_steps: 4                      # Number of time steps for temporal models
+  validation_split: 0.2              # Fraction of data to use for validation
+  early_stopping_patience: 10        # Number of epochs to wait before early stopping
+  save_dir: "models"                 # Where to save trained models
+  
+# Evaluation parameters
+evaluation:
+  metrics: ["accuracy", "precision", "recall", "f1", "auc"]
+  visualization:
+    save_dir: "results/visualizations"
+    num_samples: 10                  # Number of samples to visualize
+    
+# Logging and output
+logging:
+  level: "INFO"                      # Logging level
+  save_dir: "logs"                   # Where to save logs
+  tensorboard: true                  # Whether to use TensorBoard
+  wandb: false                       # Whether to use Weights & Biases
+  project_name: "deforestation-detection" # Project name for logging

@@ -1,56 +1,110 @@
+# Deforestation Detection Using Deep Learning
 
+This project uses satellite imagery and deep learning to detect and monitor deforestation. The system processes temporal satellite data from sources like Sentinel-2 and Landsat, and trains various neural network architectures to identify areas where deforestation has occurred.
 
-# TreeSentry: Deep Learning for Deforestation Detection
+## Features
 
-## Overview
+- Data acquisition from Google Earth Engine
+- Processing of satellite imagery into training samples
+- Multiple neural network architectures:
+  - UNet for semantic segmentation
+  - 3D CNN for spatio-temporal analysis
+  - ConvLSTM for time series analysis
+- Configuration-based pipeline
+- Visualization and evaluation tools
 
-Deforestation continues to be one of the greatest threats to global climate stability, biodiversity, and ecosystem health. Traditional monitoring systems, while valuable, often miss early signs of deforestation due to their reliance on low-resolution satellite imagery and simple vegetation indices. 
+## Project Structure
 
-**TreeSentry** is a project developed by Sri Harsha Vallabhaneni and Samhitha Sannidhi, aimed at addressing this gap by combining high-resolution satellite imagery from Planet Labs with deep learning techniques, particularly convolutional neural networks (CNNs), to detect deforestation events earlier and more accurately.
+```
+deforestation-detection/
+├── data/
+│   ├── raw/          # For downloaded satellite data
+│   ├── processed/    # For processed tiles
+│   ├── boundary.shp  # You need to provide this
+│   └── tiles.shp     # Optional
+├── models/           # Saved models
+├── logs/             # Training logs
+├── results/
+│   └── visualizations/ # Visualization outputs
+├── src/              # Source code
+├── config.yaml       # Configuration
+├── main.py           # Entry point
+└── README.md         # This file
+```
 
-While our focus for this project is on the Amazon Rainforest — one of the most critical and vulnerable ecosystems — the methodology we develop is designed to be scalable and adaptable to forests worldwide.
+## Prerequisites
 
-## Project Motivation
+- Python 3.7+
+- Google Earth Engine account and authentication
+- Required Python packages (see requirements.txt)
+- Shapefile defining your area of interest
 
-- Enable early detection of small-scale deforestation events that traditional methods miss.
-- Improve precision and recall of forest loss detection compared to NDVI-based baselines.
-- Support conservation efforts by providing actionable and timely insights into forest health.
-- Showcase a real-world application of deep learning models for environmental monitoring.
+## Installation
 
-## Approach
-
-- **Dataset:** We use the Planet Amazon Rainforest dataset (40,000+ high-resolution satellite images with multi-label annotations).
-- **Model:** We fine-tune a pre-trained ResNet-50 CNN architecture to perform binary classification (deforestation vs no-deforestation).
-- **Training:** The model is trained using binary cross-entropy loss, with data augmentations (flips, rotations) and class-balanced mini-batches to tackle imbalance.
-- **Evaluation:** We compare our deep learning model against traditional NDVI thresholding baselines using accuracy, precision, recall, and F1 score.
-- **Experiments:** In addition to quantitative metrics, we perform qualitative analysis by visually inspecting model predictions over sample areas.
-
-## Quickstart
-
-1. Set up a Python environment (Python 3.8+ recommended).
-2. Install dependencies:
+1. Clone the repository:
    ```
-   pip install torch torchvision pandas pillow kaggle
+   git clone https://github.com/yourusername/deforestation-detection.git
+   cd deforestation-detection
    ```
-3. Download the Planet Amazon dataset from Kaggle (after accepting competition rules):
-   ```
-   kaggle competitions download -c planet-understanding-the-amazon-from-space -p data/
-   cd data/
-   unzip train-jpg.zip
-   mv train-jpg train_images
-   mv train_v2.csv train_labels.csv
-   ```
-4. Train the model:
-   ```
-   python app.py
-   ```
-5. Make predictions on new images using the provided `predict` function.
 
-## Team
+2. Install requirements:
+   ```
+   pip install -r requirements.txt
+   ```
 
-- **Sri Harsha Vallabhaneni**
-- **Samhitha Sannidhi**
+3. Authenticate with Google Earth Engine:
+   ```
+   earthengine authenticate
+   ```
 
-Developed as part of our Neural Networks and Deep Learning course project, with a focus on solving a real-world environmental challenge using deep learning principles.
+## How to Use
 
----
+### 1. Prepare Your Data
+
+Place your boundary shapefile (defining your area of interest) in the `data/` directory.
+
+### 2. Configure the Project
+
+Edit `config.yaml` to specify your parameters:
+- Data paths
+- Satellite imagery sources and years
+- Preprocessing parameters
+- Model architecture and training parameters
+
+### 3. Run the Pipeline
+
+To run the complete pipeline:
+```
+python main.py --config config.yaml --stage all
+```
+
+Or run individual stages:
+```
+python main.py --config config.yaml --stage download    # Download data
+python main.py --config config.yaml --stage preprocess  # Process data
+python main.py --config config.yaml --stage train       # Train models
+```
+
+### 4. Evaluate Results
+
+The trained models will be stored in the `models/` directory. Visualizations will be saved in `results/visualizations/`.
+
+## Models
+
+This project implements several neural network architectures for deforestation detection:
+
+1. **UNet**: A convolutional network architecture for semantic segmentation.
+2. **Simple3DCNN**: A 3D convolutional neural network for spatio-temporal analysis.
+3. **ConvLSTM**: A convolutional LSTM for capturing temporal patterns in satellite imagery.
+
+## License
+
+[Insert your license information here]
+
+## Acknowledgments
+
+- [Add any acknowledgments or references here]
+
+## Contact
+
+[Your contact information]
