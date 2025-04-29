@@ -2,8 +2,8 @@
 
 # Data paths
 data:
-  boundary_shp: "data/boundary.shp"  # Path to shapefile defining study area
-  tiles_shp: "data/tiles.shp"        # Path to optional shapefile defining processing tiles
+  boundary_shp: "data/amazon_rainforest_simplified.shp"  # Path to shapefile defining study area
+  tiles_shp: null        # Path to optional shapefile defining processing tiles
   download_dir: "data/raw"           # Where to save raw satellite data
   processed_dir: "data/processed"    # Where to save processed tiles
   

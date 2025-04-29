@@ -6,7 +6,7 @@ import time
 from src.utils import get_logger
 
 class DataLoader:
-    def __init__(self, boundary_shp, tiles_shp=None, download_dir=None):
+    def __init__(self, boundary_shp, tiles_shp=None, download_dir=None, project_id="monday-0908"):
         """
         Download satellite imagery from Google Earth Engine.
         
@@ -16,7 +16,12 @@ class DataLoader:
             download_dir: Directory to save downloaded data
         """
         try:
-            ee.Initialize()
+            # Initialize with project ID if provided
+            if project_id:
+                ee.Initialize(project=project_id)
+            else:
+                # Try to initialize with default credentials
+                ee.Initialize()
         except Exception as e:
             print("Error initializing Earth Engine. Make sure you're authenticated.")
             print("Run 'earthengine authenticate' on the command line.")
@@ -180,7 +185,7 @@ class DataLoader:
                             fileNamePrefix=f"{band}_{year}_{name}",
                             region=geometry,
                             scale=scale,
-                            maxPixels=1e9
+                            maxPixels=1e12
                         )
                         task.start()
                         
